@@ -1,143 +1,450 @@
-'''
-This implements a simplified version of Wheel of Fortune. The computer chooses a word
-from a list of words and the user guesses letters until they have filled in all the letters 
-in the word or have guessed incorrectly 5 times.
-'''
-import random
+"""
+This program simulates a BINGO game
+"""
 
-def chooseWord():
-    """
-    This function chooses a word from a pre-defined list.
-    Parameters:  None
-    Return Value: a string representing the word
-    """
-
-    validWords = ["queens", "science", "brock", "java", "cyberpunk", "edgerunners", "toronto", "cisc"]
-
-    
-
-    return validWords[random.randint(0,len(validWords))]
-
-def printStringWithSpaces(word):
-    """
-    This function prints the word representation (eg: "__r_")
-    on the screen with spaces between each underscore/letter
-    so that the user can better see how many letters there are.
-    Parameter: string
-    Return Value:  None
-    """
-
-    for i in range(len(word)):
-        print(word[i], end=" " ) #print the word with space in between each letter
-
-    print()
-    print()
-
-
-def convertToUnderscores(word):
-    """
-    Creates a string consisting of len(word) underscores.
-    For example, if word = "cat", function returns "___" (3 underscores)
-
-    Parameter: string
-    Return Value: string
-    """
-
-    underscore = "" 
-
-    for i in range(len(word)):
-        underscore += "_" #add underscore for each letter of the word
-    return underscore
-
-    
-
-def updateWord(currentRep, word, letter):
-    """
-    This function replaces the underscores with the guessed letter.
-    Eg.  letter = 'p', word = "stop", currentRep = "s___" --> returns "s__p"
-    Paramters:   currentRep, word are strings
-                letter is a string, but a single letter.
-    Returns:  a string
-    """
-
-    newString = ""
-    for i in range(len(word)):
-        if letter == word[i]:
-            newString += letter #add letter if the guess is correct
-        else:
-            newString += currentRep[i] #add an underscore if the word is incorrect
-    return newString
-        
-
-    
-def updateUsedLetters(usedLetters, letter):
-    """
-    This function concatenates the guessed letter onto the list of letters
-    that have been guessed, returning the result.
-    Parameters: string representing the used letters
-                string respresenting the current user guess
-    Return Value:  string
-    """
-
-    usedLetters += letter #add letter the the used letters list
-    return usedLetters
-    
-
-    
+import functions
 
 def main():
-    """
-    This implements the user interface for the program.
-    """
-    usedLetters = "" #no letters guessed yet
-    wrongGuesses = 0 #keep track of incorrect guesses
-
-    #the word to guess
-    word = chooseWord()
-
-    print("The word to guess is ", word)  
-
-    
-    currentRep = convertToUnderscores(word)   #convert the word to underscore
-
-
-    print(convertToUnderscores(word))
-
-    #continueGame is a flag that will turn to false when the user wins or loses
-    #the game.
-    continueGame = True
-    while continueGame:
-        guess = input("Please enter a letter (a-z): ") #ask user for a guess
+    wordList = ['motorcycle', 'police car', 'fire truck', 'ambulance', 'military vehicle', 'bus', 'airport shuttle', 'limousine', 'Hummer', 'Mini-Cooper', 'PT Cruiser', 
+    'Austin Healey', 'convertible', 'electric car', 'bicycle', 'cows', 'stop sign', 'camper', 'taxi', 'pizza delivery', 'tow truck', 'dump truck', 'cemetary', 'logging truck', 
+    'mattress on roof', 'sailboat', 'hotel', 'willow tree', 'blue van', 'flying pig', 'sports team bumper sticker', 'Canadian flag', 'service center', 'dog in car', 
+    'someone stopped by police', 'for sale sign', 'revolving sign', 'birds on a wire', 'field of flowers', 'clothesline', 'traffic cone', 'a shoe on the road', 'Tim Hortons', 
+    'baseball game', 'airplane', 'license plate starting with A', 'Quebec license plate', 'US license plate', 'yeild sign', 'construction sign', 'baby on board sign', 
+    'church', 'barn', 'hawk', '']
+    print(wordList)
+    repeat = True
+    while repeat:
+        playerNum = int(input("How many player are playing? (choose from 1-3): ")) #ask for number of players
+        goal = int(input("What goal do you want to choose?(input '1' for Full Card, '2' for Single Line and '3' for Four Corners): ")) #ask for goal
         
-        #check for valid input
-        while not(guess.isalpha()) or len(guess) != 1:
-            guess = input("Please enter valid input(a single letter (a-z)):") #ask user for a guess if the previous input was invalid
+        notBingo = True
+        while notBingo:
+            if goal == 1:                
+                if playerNum == 1:
+                    player1 = input("What is the name of player 1: ") #ask for name
+                    player1Card = functions.createCard(player1, wordList) #create cards
+                    
+                    functions.printCard(player1, player1Card) #print and format cards
+                
+                
+                
+                    roundWordList = wordList
+                    wordNotChosen = True
+                    while wordNotChosen:
+                        randomWord = input("What word do you want to choose?: ") #ask for called word
+                        if randomWord in roundWordList:
+                            print("The chosen word is:", randomWord)
+                            roundWordList.remove(randomWord) #remove the guessed word
+                            wordNotChosen = False
+                        else:
+                            print("The word have been chosen or not in the word list. Please choose again") #inform to retry
+                        
+                        
+                    for i in range(len(player1Card)):
+                        if player1Card[i] == randomWord:
+                            player1Card[i] = "FOUND" #check guessed word as "FOUND"
+                            
+                    functions.printCard(player1, player1Card)
+                    
+                    if functions.fullCardWinning(player1Card):
+                        print(player1, "wins")
+                        print("GAME START OVER")
+                        notBingo = False #start over
+                    
+                    
+                    
+                    
+                elif playerNum == 2:
+                    player1 = input("What is the name of player 1: ")
+                    player1Card = functions.createCard(player1, wordList)
+                    player2 = input("What is the name of player 2: ")
+                    player2Card = functions.createCard(player2, wordList)
+                    
+                    functions.printCard(player1, player1Card)
+                    functions.printCard(player2, player2Card)
+                    
+                    notBingo = True
+                    while notBingo:
+                        roundWordList = wordList
+                        wordNotChosen = True
+                        while wordNotChosen:
+                            randomWord = input("What word do you want to choose?: ")
+                            if randomWord in roundWordList:
+                                print("The chosen word is:", randomWord)
+                                roundWordList.remove(randomWord)
+                                wordNotChosen = False
+                            else:
+                                print("The word have been chosen or not in the word list. Please choose again")
+                            
+                            
+                        for i in range(len(player1Card)):
+                            if player1Card[i] == randomWord:
+                                player1Card[i] = "FOUND"
+                        functions.printCard(player1, player1Card)
+                        
+                        
+                        
+                        for i in range(len(player2Card)):
+                            if player2Card[i] == randomWord:
+                                player2Card[i] = "FOUND"
+                                
+                        functions.printCard(player2, player2Card)
+                        
+                        if functions.fullCardWinning(player1Card):
+                            print(player1, "wins")
+                            print("GAME START OVER")
+                            notBingo = False
+                        if functions.fullCardWinning(player2Card):
+                            print(player2, "wins")
+                            print("GAME START OVER")
+                            notBingo = False
+                        
+                    
+                elif playerNum == 3:
+                    player1 = input("What is the name of player 1: ")
+                    player1Card = functions.createCard(player1, wordList)
+                    player2 = input("What is the name of player 2: ")
+                    player2Card = functions.createCard(player2, wordList)
+                    player3 = input("What is the name of player 3: ")
+                    player3Card = functions.createCard(player3, wordList)
+                    
+                    functions.printCard(player1, player1Card)
+                    functions.printCard(player2, player2Card)
+                    functions.printCard(player3, player3Card)
+                    
+                    notBingo = True
+                    while notBingo:
+                        roundWordList = wordList
+                        wordNotChosen = True
+                        while wordNotChosen:
+                            randomWord = input("What word do you want to choose?: ")
+                            if randomWord in roundWordList:
+                                print("The chosen word is:", randomWord)
+                                roundWordList.remove(randomWord)
+                                wordNotChosen = False
+                            else:
+                                print("The word have been chosen or not in the word list. Please choose again")
+                            
+                            
+                        for i in range(len(player1Card)):
+                            if player1Card[i] == randomWord:
+                                player1Card[i] = "FOUND"
+                        functions.printCard(player1, player1Card)
+                        
+                        for i in range(len(player2Card)):
+                            if player2Card[i] == randomWord:
+                                player2Card[i] = "FOUND"
+                        functions.printCard(player2, player2Card)
+                        
+                        for i in range(len(player3Card)):
+                            if player3Card[i] == randomWord:
+                                player3Card[i] = "FOUND"
+                        functions.printCard(player3, player3Card)
+                        
+                        if functions.fullCardWinning(player1Card):
+                            print(player1, "wins")
+                            
+                            print(player2, "wins")
+                            print("GAME START OVER")
+                            notBingo = False
+                            
+                        if functions.fullCardWinning(player2Card):
+                            print(player2, "wins")
+                            print("GAME START OVER")
+                            notBingo = False
+                        if functions.fullCardWinning(player3Card):
+                            print(player3, "wins")
+                            print("GAME START OVER")
+                            notBingo = False
+            elif goal == 2:
+                if playerNum == 1:
+                    player1 = input("What is the name of player 1: ")
+                    player1Card = functions.createCard(player1, wordList)
+                    
+                    functions.printCard(player1, player1Card)
+                    
+                    notBingo = True
+                    while notBingo:
+                        roundWordList = wordList
+                        wordNotChosen = True
+                        while wordNotChosen:
+                            randomWord = input("What word do you want to choose?: ")
+                            if randomWord in roundWordList:
+                                print("The chosen word is:", randomWord)
+                                roundWordList.remove(randomWord)
+                                wordNotChosen = False
+                            else:
+                                print("The word have been chosen or not in the word list. Please choose again")
+                            
+                            
+                        for i in range(len(player1Card)):
+                            if player1Card[i] == randomWord:
+                                player1Card[i] = "FOUND"
+                                
+                        functions.printCard(player1, player1Card)
+                        
+                        if functions.singleLineWinning(player1Card):
+                            print(player1, "wins")
+                            print("GAME START OVER")
+                            notBingo = False
+                    
+                            
+                        
+                        
+                        
+                        
+                elif playerNum == 2:
+                    player1 = input("What is the name of player 1: ")
+                    player1Card = functions.createCard(player1, wordList)
+                    player2 = input("What is the name of player 2: ")
+                    player2Card = functions.createCard(player2, wordList)
+                    
+                    functions.printCard(player1, player1Card)
+                    functions.printCard(player2, player2Card)
+                    
+                    notBingo = True
+                    while notBingo:
+                        roundWordList = wordList
+                        wordNotChosen = True
+                        while wordNotChosen:
+                            randomWord = input("What word do you want to choose?: ")
+                            if randomWord in roundWordList:
+                                print("The chosen word is:", randomWord)
+                                roundWordList.remove(randomWord)
+                                wordNotChosen = False
+                            else:
+                                print("The word have been chosen or not in the word list. Please choose again")
+                            
+                            
+                        for i in range(len(player1Card)):
+                            if player1Card[i] == randomWord:
+                                player1Card[i] = "FOUND"
+                        functions.printCard(player1, player1Card)
+                        
+                        for i in range(len(player2Card)):
+                            if player2Card[i] == randomWord:
+                                player2Card[i] = "FOUND"
+                                
+                        functions.printCard(player2, player2Card)
+                        
+                        if functions.singleLineWinning(player1Card):
+                            print(player1, "wins")
+                            print("GAME START OVER")
+                            notBingo = False
+                            
+                            
+                        if functions.singleLineWinning(player2Card):
+                            print(player2, "wins")
+                            print("GAME START OVER")
+                            notBingo = False
+                            
+                            
+                        
+                    
+                elif playerNum == 3:
+                    player1 = input("What is the name of player 1: ")
+                    player1Card = functions.createCard(player1, wordList)
+                    player2 = input("What is the name of player 2: ")
+                    player2Card = functions.createCard(player2, wordList)
+                    player3 = input("What is the name of player 3: ")
+                    player3Card = functions.createCard(player3, wordList)
+                    
+                    functions.printCard(player1, player1Card)
+                    functions.printCard(player2, player2Card)
+                    functions.printCard(player3, player3Card)
+                    
+                    notBingo = True
+                    while notBingo:
+                        roundWordList = wordList
+                        wordNotChosen = True
+                        while wordNotChosen:
+                            randomWord = input("What word do you want to choose?: ")
+                            if randomWord in roundWordList:
+                                print("The chosen word is:", randomWord)
+                                roundWordList.remove(randomWord)
+                                wordNotChosen = False
+                            else:
+                                print("The word have been chosen or not in the word list. Please choose again")
+                            
+                            
+                        for i in range(len(player1Card)):
+                            if player1Card[i] == randomWord:
+                                player1Card[i] = "FOUND"
+                        functions.printCard(player1, player1Card)
+                        
+                        for i in range(len(player2Card)):
+                            if player2Card[i] == randomWord:
+                                player2Card[i] = "FOUND"
+                        functions.printCard(player2, player2Card)
+                        
+                        for i in range(len(player3Card)):
+                            if player3Card[i] == randomWord:
+                                player3Card[i] = "FOUND"
+                        functions.printCard(player3, player3Card)
+                        
+                        if functions.singleLineWinning(player1Card):
+                            print(player1, "wins")
+                            
+                            print("GAME START OVER")
+                            notBingo = False
+                            
+                            
+                        if functions.singleLineWinning(player2Card):
+                            print(player2, "wins")
+                            
+                            print("GAME START OVER")
+                            notBingo = False
+                            
+                        if functions.singleLineWinning(player3Card):
+                            print(player3, "wins")
+                            
+                            print("GAME START OVER")
+                            notBingo = False
+            elif goal == 3:
+                if playerNum == 1:
+                    player1 = input("What is the name of player 1: ")
+                    player1Card = functions.createCard(player1, wordList)
+                    
+                    functions.printCard(player1, player1Card)
+                    
+                    notBingo = True
+                    while notBingo:
+                        roundWordList = wordList
+                        wordNotChosen = True
+                        while wordNotChosen:
+                            randomWord = input("What word do you want to choose?: ")
+                            if randomWord in roundWordList:
+                                print("The chosen word is:", randomWord)
+                                roundWordList.remove(randomWord)
+                                wordNotChosen = False
+                            else:
+                                print("The word have been chosen or not in the word list. Please choose again")
+                            
+                            
+                        for i in range(len(player1Card)):
+                            if player1Card[i] == randomWord:
+                                player1Card[i] = "FOUND"
+                                
+                        functions.printCard(player1, player1Card)
+                        
+                        if functions.fourCornersWinning(player1Card):
+                            print(player1, "wins")
+                            
+                            print("GAME START OVER")
+                            notBingo = False
+                            
+                            
+                        
+                        
+                        
+                        
+                elif playerNum == 2:
+                    player1 = input("What is the name of player 1: ")
+                    player1Card = functions.createCard(player1, wordList)
+                    player2 = input("What is the name of player 2: ")
+                    player2Card = functions.createCard(player2, wordList)
+                    
+                    functions.printCard(player1, player1Card)
+                    functions.printCard(player2, player2Card)
+                    
+                    notBingo = True
+                    while notBingo:
+                        roundWordList = wordList
+                        wordNotChosen = True
+                        while wordNotChosen:
+                            randomWord = input("What word do you want to choose?: ")
+                            if randomWord in roundWordList:
+                                print("The chosen word is:", randomWord)
+                                roundWordList.remove(randomWord)
+                                wordNotChosen = False
+                            else:
+                                print("The word have been chosen or not in the word list. Please choose again")
+                            
+                            
+                        for i in range(len(player1Card)):
+                            if player1Card[i] == randomWord:
+                                player1Card[i] = "FOUND"
+                        functions.printCard(player1, player1Card)
+                        
+                        for i in range(len(player2Card)):
+                            if player2Card[i] == randomWord:
+                                player2Card[i] = "FOUND"
+                                
+                        functions.printCard(player2, player2Card)
+                        
+                        if functions.fourCornersWinning(player1Card):
+                            print(player1, "wins")
+                            print("GAME START OVER")
+                            notBingo = False
+                            
+                            
+                        if functions.fourCornersWinning(player2Card):
+                            print(player2, "wins")
+                            print("GAME START OVER")
+                            notBingo = False
+                            
+                            
+                        
+                    
+                elif playerNum == 3:
+                    player1 = input("What is the name of player 1: ")
+                    player1Card = functions.createCard(player1, wordList)
+                    player2 = input("What is the name of player 2: ")
+                    player2Card = functions.createCard(player2, wordList)
+                    player3 = input("What is the name of player 3: ")
+                    player3Card = functions.createCard(player3, wordList)
+                    
+                    functions.printCard(player1, player1Card)
+                    functions.printCard(player2, player2Card)
+                    functions.printCard(player3, player3Card)
+                    
+                    notBingo = True
+                    while notBingo:
+                        roundWordList = wordList
+                        wordNotChosen = True
+                        while wordNotChosen:
+                            randomWord = input("What word do you want to choose?: ")
+                            if randomWord in roundWordList:
+                                print("The chosen word is:", randomWord)
+                                roundWordList.remove(randomWord)
+                                wordNotChosen = False
+                            else:
+                                print("The word have been chosen or not in the word list. Please choose again")
+                            
+                            
+                        for i in range(len(player1Card)):
+                            if player1Card[i] == randomWord:
+                                player1Card[i] = "FOUND"
+                        functions.printCard(player1, player1Card)
+                        
+                        for i in range(len(player2Card)):
+                            if player2Card[i] == randomWord:
+                                player2Card[i] = "FOUND"
+                        functions.printCard(player2, player2Card)
+                        
+                        for i in range(len(player3Card)):
+                            if player3Card[i] == randomWord:
+                                player3Card[i] = "FOUND"
+                        functions.printCard(player3, player3Card)
+                        
+                        if functions.fourCornersWinning(player1Card):
+                            print(player1, "wins")
+                            print("GAME START OVER")
+                            notBingo = False
+                            
+                            functions.printCard(player1, player1Card)
+                            functions.printCard(player2, player2Card)
+                            functions.printCard(player3, player3Card)
+                            
+                        if functions.fourCornersWinning(player2Card):
+                            print(player2, "wins")
+                            print("GAME START OVER")
+                            notBingo = False
+                        if functions.fourCornersWinning(player3Card):
+                            print(player3, "wins")
+                            print("GAME START OVER")
+                            notBingo = False
             
-        guess = guess.lower() #make the letter lower so capital input can be valid
-
-        print("You have guessed ", guess)
-
-        if guess not in usedLetters:
-            updateUsedLetters(usedLetters, guess) #update used letters list
-            if guess in word:
-                #letter is in the secret word so update the current representation
-                currentRep = updateWord(currentRep, word, guess) #update the current word
-                printStringWithSpaces(currentRep) #print out the current word
-                if word ==  currentRep:
-                    print("Congratulations! you won") #inform that they won
-                    continueGame = False #stop the game
-
-            else:
-                wrongGuesses += 1 #increase number of wrong guesses
-                if wrongGuesses == 5:
-                    print("The letter is not in the word!")
-                    print("Sorry! you lost. Better luck next time!") #inform that they lost
-                    continueGame = False #stop the game           
-        else:
-            #letter has been guessed already -- update the user
-            print("You have already guessed that letter!!!")
-            print("Here are the letters you have guessed so far: ") # inform that letter has been guessed
-            printStringWithSpaces(usedLetters)
             
 
 main()
